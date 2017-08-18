@@ -8,19 +8,30 @@ import UIKit
 
 class SlidingPageTabViewController: UIViewController {
 
-  var pageInfoDic: Dictionary<String, Any>! //{
+  var pageInfoDic: Array<Dictionary<String, Any>>! //{
 //    didSet {
 //      self.numberOfPage = pageInfo.count
 //    }
 //  }
 
-  fileprivate var numberOfPage = 3
+  fileprivate var numberOfPage = 0
 
   fileprivate var menuBarView: UIView!
   fileprivate var menuUnderLineView: UIView!
   fileprivate var menuUnderLineViewLeftConstraint: NSLayoutConstraint!
 
   fileprivate var contentCollectionView: UICollectionView!
+
+  init(_ pageInfo: Array<Dictionary<String, Any>>) {
+    super.init(nibName: nil, bundle: nil)
+
+    self.pageInfoDic = pageInfo
+    self.numberOfPage = pageInfoDic.count
+  }
+  
+  required init?(coder aDecoder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -36,6 +47,7 @@ class SlidingPageTabViewController: UIViewController {
     contentCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
     contentCollectionView.register(PageCell.self, forCellWithReuseIdentifier: PageCell.identifier)
     contentCollectionView.isPagingEnabled = true
+    contentCollectionView.showsHorizontalScrollIndicator = false
 
     self.view.addSubview(menuBarView)
     self.view.addSubview(contentCollectionView)
@@ -98,13 +110,13 @@ class SlidingPageTabViewController: UIViewController {
   fileprivate func setupMenus() {
     //guard numberOfPage > 0, pageInfoDic.count > 0 else {return}
 
-    pageInfoDic = ["menu1":"test", "menu2":"test"]
-
     var index = 0
     var buttons: [String:Any] = [:]
     var horizontalVisualFormat = ""
 
-    for (menuName, _) in pageInfoDic {
+    for dic in pageInfoDic {
+      let menuName = dic.first?.key
+
       let button = UIButton()
       button.setTitle(menuName, for: .normal)
       button.tag = index
@@ -150,6 +162,27 @@ extension SlidingPageTabViewController: UICollectionViewDataSource {
 
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     let cell: PageCell = collectionView.dequeueReusableCell(withReuseIdentifier: PageCell.identifier, for: indexPath) as! PageCell
+    let pageInfo :Dictionary = pageInfoDic[indexPath.row]
+    let viewController :UIViewController = pageInfo.first?.value as! UIViewController
+    cell.contentView.addSubview(viewController.view)
+
+
+    viewController.view.translatesAutoresizingMaskIntoConstraints = false
+
+    let views: [String:Any]
+    views = ["view": viewController.view]
+    let horizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|[view]|",
+                                                               options: .alignAllLeft,
+                                                               metrics: nil,
+                                                               views: views)
+    let verticalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|[view]|",
+                                                             options: .alignAllLeft,
+                                                             metrics: nil,
+                                                             views: views)
+    cell.contentView.addConstraints(horizontalConstraints)
+    cell.contentView.addConstraints(verticalConstraints)
+
+    self.addChildViewController(viewController)
     return cell
   }
 }

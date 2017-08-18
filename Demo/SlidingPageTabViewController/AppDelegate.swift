@@ -18,7 +18,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let window = UIWindow(frame: UIScreen.main.bounds)
     window.backgroundColor = .white
     window.makeKeyAndVisible()
-    window.rootViewController = SlidingPageTabViewController()
+//    window.rootViewController = SlidingPageTabViewController()
+    let pageInfo = [["first": FirstViewController()],
+                    ["second": SecondViewController()],
+                    ["third": ThirdViewController()]]
+    window.rootViewController = SlidingPageTabViewController(pageInfo)
     self.window = window
     return true
   }
