@@ -24,14 +24,7 @@ class SlidingPageTabViewController: UIViewController {
 
   init(_ infos: Array<Dictionary<String, Any>>) {
     super.init(nibName: nil, bundle: nil)
-
     ({ self.pageInfos = infos })()
-
-    self.pageInfos = [["first": FirstViewController()],
-                      ["second": SecondViewController()],
-                      ["third": ThirdViewController()]]
-    self.pageInfos = infos
-    self.numberOfPage = pageInfos.count
   }
   
   required init?(coder aDecoder: NSCoder) {
@@ -109,8 +102,10 @@ class SlidingPageTabViewController: UIViewController {
       let menuName = dic.first?.key
 
       let button = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+      button.tag = index
       button.setTitle(menuName, for: .normal)
       button.setTitleColor(UIColor.darkGray, for: .normal)
+      button.addTarget(self, action: #selector(tapMenuButtonDidTap(_:)), for: .touchUpInside)
       button.translatesAutoresizingMaskIntoConstraints = false
       self.menuBarView.addSubview(button)
 
@@ -141,6 +136,14 @@ class SlidingPageTabViewController: UIViewController {
 
   fileprivate func setupContentCollection() {
 
+  }
+
+  func tapMenuButtonDidTap(_ sender: UIButton){
+    UIView.animate(withDuration: 0.1) {
+      self.menuUnderLineViewLeftConstraint.constant = sender.frame.origin.x
+      self.contentCollectionView.scrollToItem(at: IndexPath(row: sender.tag, section: 0), at: .left, animated: true)
+      self.view.layoutIfNeeded()
+    }
   }
 }
 
