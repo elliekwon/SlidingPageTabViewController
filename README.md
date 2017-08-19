@@ -4,9 +4,11 @@
 
 Horizontally slidable paging viewController with tab menu
 
-## Feature (will develop)
-- [ ] Horizontally scrolling a number of viewControllers.
-- [ ] Selectable a viewController as touch on tapBar menu.
-- [ ] Underline of current tabMenu will automatically move when user scroll viewControllers horizontally.
+## Feature (on develop)
+- [x] Horizontally scrolling a number of viewControllers.
+- [x] Selectable a viewController as touch on tapBar menu.
+- [x] Underline of menu will automatically move when user scroll viewControllers.
+- [ ] Support changing device orientation.
 
-## Sample
+## Demo
+![demo](./Demo/SlidingPageTabViewControllerDemo.gif)
