@@ -1,10 +1,9 @@
 //
 //  FirstViewController.swift
-//  SlidingPageTabViewController
 //
-//  Created by Ellie Kwon on 2017. 8. 19..
-//  Copyright © 2017년 Ellie Kwon. All rights reserved.
+//  Copyright © 2017 Ellie Kwon. All rights reserved.
 //
+
 
 import UIKit
 

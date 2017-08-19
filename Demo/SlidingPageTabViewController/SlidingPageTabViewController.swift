@@ -8,11 +8,11 @@ import UIKit
 
 class SlidingPageTabViewController: UIViewController {
 
-  var pageInfoDic: Array<Dictionary<String, Any>>! //{
-//    didSet {
-//      self.numberOfPage = pageInfo.count
-//    }
-//  }
+  var pageInfos: Array<Dictionary<String, Any>>! {
+    didSet {
+      self.numberOfPage = pageInfos.count
+    }
+  }
 
   fileprivate var numberOfPage = 0
 
@@ -22,11 +22,16 @@ class SlidingPageTabViewController: UIViewController {
 
   fileprivate var contentCollectionView: UICollectionView!
 
-  init(_ pageInfo: Array<Dictionary<String, Any>>) {
+  init(_ infos: Array<Dictionary<String, Any>>) {
     super.init(nibName: nil, bundle: nil)
 
-    self.pageInfoDic = pageInfo
-    self.numberOfPage = pageInfoDic.count
+    ({ self.pageInfos = infos })()
+
+    self.pageInfos = [["first": FirstViewController()],
+                      ["second": SecondViewController()],
+                      ["third": ThirdViewController()]]
+    self.pageInfos = infos
+    self.numberOfPage = pageInfos.count
   }
   
   required init?(coder aDecoder: NSCoder) {
@@ -50,6 +55,7 @@ class SlidingPageTabViewController: UIViewController {
     contentCollectionView.showsHorizontalScrollIndicator = false
 
     self.view.addSubview(menuBarView)
+    self.menuBarView.addSubview(menuUnderLineView)
     self.view.addSubview(contentCollectionView)
 
     menuBarView.translatesAutoresizingMaskIntoConstraints = false
@@ -60,7 +66,7 @@ class SlidingPageTabViewController: UIViewController {
     contentCollectionView.delegate = self
 
     let views: [String:Any]
-    views = ["menuBarView": menuBarView, "contentCollectionView": contentCollectionView]
+    views = ["menuBarView": menuBarView, "contentCollectionView": contentCollectionView, "menuUnderLineView": menuUnderLineView]
     let horizontalConstraintsForMenu = NSLayoutConstraint.constraints(withVisualFormat: "H:|[menuBarView]|",
                                                                options: .alignAllLeft,
                                                                metrics: nil,
@@ -69,25 +75,13 @@ class SlidingPageTabViewController: UIViewController {
                                                                options: .alignAllLeft,
                                                                metrics: nil,
                                                                views: views)
-    let verticalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|[menuBarView(50)][contentCollectionView]|",
+    let verticalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|-20-[menuBarView(50)][menuUnderLineView(3)][contentCollectionView]|",
                                                                options: .alignAllLeft,
                                                                metrics: nil,
                                                                views: views)
     self.view.addConstraints(horizontalConstraintsForMenu)
     self.view.addConstraints(horizontalConstraintsForContent)
     self.view.addConstraints(verticalConstraints)
-
-
-
-    let views2: [String:Any]
-    views2 = ["menuUnderLineView": menuUnderLineView]
-
-
-    self.menuBarView.addSubview(menuUnderLineView)
-    let verticalConstraintsForUnderLine = NSLayoutConstraint.constraints(withVisualFormat: "V:|-[menuUnderLineView(3)]|",
-                                                         options: .alignAllLeft,
-                                                         metrics: nil,
-                                                         views: views2)
 
     let screenSize: CGRect = UIScreen.main.bounds
 
@@ -96,54 +90,50 @@ class SlidingPageTabViewController: UIViewController {
                                                               attribute: .left, multiplier: 1.0, constant: 0.0)
     let menuUnderLineViewWidthConstraint = NSLayoutConstraint.init(item: menuUnderLineView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: screenSize.width/CGFloat(self.numberOfPage))
 
+    self.view.addConstraint(menuUnderLineViewLeftConstraint)
+    self.view.addConstraint(menuUnderLineViewWidthConstraint)
 
-    self.menuBarView.addConstraints(verticalConstraintsForUnderLine)
-    self.menuBarView.addConstraint(menuUnderLineViewLeftConstraint)
-    self.menuBarView.addConstraint(menuUnderLineViewWidthConstraint)
+    menuUnderLineView.backgroundColor = UIColor.darkGray
 
-    menuBarView.backgroundColor = UIColor.red
-    menuUnderLineView.backgroundColor = UIColor.blue
-
-    //setupMenus()
+    setupMenus()
   }
 
   fileprivate func setupMenus() {
     //guard numberOfPage > 0, pageInfoDic.count > 0 else {return}
 
     var index = 0
-    var buttons: [String:Any] = [:]
+    var buttons: [String:UIButton] = [:]
     var horizontalVisualFormat = ""
 
-    for dic in pageInfoDic {
+    for dic in pageInfos {
       let menuName = dic.first?.key
 
-      let button = UIButton()
+      let button = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
       button.setTitle(menuName, for: .normal)
-      button.tag = index
+      button.setTitleColor(UIColor.darkGray, for: .normal)
       button.translatesAutoresizingMaskIntoConstraints = false
       self.menuBarView.addSubview(button)
 
       let key = String(format: "button%d", index)
-      let verticalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|[\(key)][menuUnderLineView(3)]|",
+      let verticalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|[\(key)]|",
                                                                  options: .alignAllLeft,
                                                                  metrics: nil,
-                                                                 views: [key: button, "menuUnderLineView": menuUnderLineView])
+                                                                 views: [key: button])
       self.menuBarView.addConstraints(verticalConstraints)
 
       buttons.updateValue(button, forKey: key)
       if index == 0 {
         horizontalVisualFormat = horizontalVisualFormat + "[\(key)]"
       } else {
-        horizontalVisualFormat = horizontalVisualFormat + "[\(key)(==button0)]"
+        horizontalVisualFormat = horizontalVisualFormat + "[\(key)(==\(String(describing: buttons.first!.key)))]"
       }
-
 
       index += 1
     }
 
-    let string = String(format: "H:|%@|", horizontalVisualFormat)
-    let horizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: string,
-                                                             options: .alignAllLeft,
+    let vfString = String(format: "H:|%@|", horizontalVisualFormat)
+    let horizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: vfString,
+                                                        options: .alignAllBottom,
                                                              metrics: nil,
                                                              views: buttons)
     self.menuBarView.addConstraints(horizontalConstraints)
@@ -162,7 +152,7 @@ extension SlidingPageTabViewController: UICollectionViewDataSource {
 
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     let cell: PageCell = collectionView.dequeueReusableCell(withReuseIdentifier: PageCell.identifier, for: indexPath) as! PageCell
-    let pageInfo :Dictionary = pageInfoDic[indexPath.row]
+    let pageInfo :Dictionary = pageInfos[indexPath.row]
     let viewController :UIViewController = pageInfo.first?.value as! UIViewController
     cell.contentView.addSubview(viewController.view)
 
@@ -198,8 +188,6 @@ class PageCell: UICollectionViewCell {
 
   override init(frame: CGRect) {
     super.init(frame: frame)
-
-    self.contentView.backgroundColor = UIColor.init(hue: CGFloat(drand48()), saturation: 1.0, brightness: 1.0, alpha: 1.0)
   }
 
   required init?(coder aDecoder: NSCoder) {
