@@ -101,10 +101,11 @@ class SlidingPageTabViewController: UIViewController {
     for dic in pageInfos {
       let menuName = dic.first?.key
 
-      let button = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+      let button = UIButton(frame: .zero)
       button.tag = index
       button.setTitle(menuName, for: .normal)
       button.setTitleColor(UIColor.darkGray, for: .normal)
+      button.setTitleColor(UIColor.lightGray, for: .highlighted)
       button.addTarget(self, action: #selector(tapMenuButtonDidTap(_:)), for: .touchUpInside)
       button.translatesAutoresizingMaskIntoConstraints = false
       self.menuBarView.addSubview(button)
