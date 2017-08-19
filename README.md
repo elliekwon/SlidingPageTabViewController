@@ -11,4 +11,4 @@ Horizontally slidable paging viewController with tab menu
 - [ ] Support changing device orientation.
 
 ## Demo
-![demo](./Demo/SlidingPageTabViewControllerDemo.gif)
+<img src="./Demo/SlidingPageTabViewControllerDemo.gif" height="400">
