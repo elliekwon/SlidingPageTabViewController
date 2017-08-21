@@ -14,6 +14,15 @@ class SlidingPageTabViewController: UIViewController {
     }
   }
 
+  var underLineBarColor: UIColor! {
+    didSet {
+      menuUnderLineView.backgroundColor = underLineBarColor
+    }
+  }
+
+  var menuBarHeight: CGFloat   = 50
+  var underLineHeight: CGFloat = 3
+
   fileprivate var numberOfPage = 0
 
   fileprivate var menuBarView: UIView!
@@ -68,9 +77,9 @@ class SlidingPageTabViewController: UIViewController {
                                                                options: .alignAllLeft,
                                                                metrics: nil,
                                                                views: views)
-    let verticalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|-20-[menuBarView(50)][menuUnderLineView(3)][contentCollectionView]|",
+    let verticalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|-20-[menuBarView(menuHeight)][menuUnderLineView(lineHeight)][contentCollectionView]|",
                                                                options: .alignAllLeft,
-                                                               metrics: nil,
+                                                               metrics: ["menuHeight": menuBarHeight, "lineHeight": underLineHeight],
                                                                views: views)
     self.view.addConstraints(horizontalConstraintsForMenu)
     self.view.addConstraints(horizontalConstraintsForContent)
