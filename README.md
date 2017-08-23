@@ -12,3 +12,15 @@ Horizontally slidable paging viewController with tab menu
 
 ## Demo
 <img src="./Demo/SlidingPageTabViewControllerDemo.gif" height="400">
+
+## How to use
+```
+let pageInfo = [["first": FirstViewController()],
+				["second": SecondViewController()],
+				["third": ThirdViewController()]]
+let viewController = SlidingPageTabViewController(pageInfo)
+```
+1. Make a array that has element of dictionary.
+ - Key of the dictionary is String type and it will shown as TabMenu's name on output screen.
+ - Value of the dictionary is UIViewController type.
+2. Make SlidingPageTabViewController has the array (be made on prev step) as parameter.
