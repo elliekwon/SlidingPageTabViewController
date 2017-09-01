@@ -1,12 +1,12 @@
 language: objective-c
 osx_image: xcode8.3
-xcode_project: <PROJECT_PLACEHOLDER>
+xcode_project: SlidingPageTabViewController.xcodeproj
 # xcode_workspace: <WORKSPACE_PLACEHOLDER>
-xcode_scheme: <SCHEME_PLACEHOLDER>
+xcode_scheme: SlidingPageTabViewController
 xcode_sdk: iphonesimulator9.3
 env:
   global:
-    - FRAMEWORK_NAME=<THIS_IS_A_PLACEHOLDER_REPLACE_ME>
+    - FRAMEWORK_NAME=SlidingPageTabViewController
 before_install:
   - brew update
   - brew outdated carthage || brew upgrade carthage
@@ -17,3 +17,7 @@ before_script:
 before_deploy:
   - carthage build --no-skip-current
   - carthage archive $FRAMEWORK_NAME
+skip_cleanup: true
+on:
+  repo: elliekwon/SlidingPageTabViewController
+  tags: true
